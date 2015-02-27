@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+
+<html ng-app="MyApp">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <script src="~/bower_components/angular/angular.min.js"></script>
+    <link href="~/Styles/Site.min.css" rel="stylesheet" />
+    <script src="~/bower_components/angular-ui/build/angular-ui.min.js"></script>
+</head>
+<body>
+    <div class="jumbotron navigation-header text-center">
+        <h2>Something Something Header</h2>
+    </div>
+    @RenderSection("breadcrumbs", false)
+    @RenderBody()
+    @RenderSection("scripts", false)
+
+    <script src="~/Scripts/MyApp.js"></script>
+    <script src="~/Scripts/MyAppServices.js"></script>
+    <script src="~/Scripts/MyAppDirectives.js"></script>
+    <script src="~/Scripts/MyAppControllers.js"></script>
+</body>
+</html>

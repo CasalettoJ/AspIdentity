@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_simpleLayout.cshtml";
+}
+
+<div ng-controller="HomeController" ng-cloak>
+    <div style="margin: 0 auto;">
+        <login></login>
+    </div>
+
+    <button class="btn btn-lg btn-danger" ng-click="TestAPI()">Test API</button>
+    <p><h1>Get/User</h1><br /> {{getResults}}</p>
+    <p><h1>Get/User/1</h1><br /> {{getIDResults}}</p>
+
+
+</div>
+

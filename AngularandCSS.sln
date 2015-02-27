@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngularandCSS.Data", "AngularandCSS.Data\AngularandCSS.Data.csproj", "{D0A87351-AAF2-447B-9FB5-CD6FF798B41D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngularandCSS.Web", "AngularandCSS.Web\AngularandCSS.Web.csproj", "{744242DF-7DC7-4A51-8C6E-92ACC844CBC9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D0A87351-AAF2-447B-9FB5-CD6FF798B41D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0A87351-AAF2-447B-9FB5-CD6FF798B41D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0A87351-AAF2-447B-9FB5-CD6FF798B41D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0A87351-AAF2-447B-9FB5-CD6FF798B41D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{744242DF-7DC7-4A51-8C6E-92ACC844CBC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{744242DF-7DC7-4A51-8C6E-92ACC844CBC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{744242DF-7DC7-4A51-8C6E-92ACC844CBC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{744242DF-7DC7-4A51-8C6E-92ACC844CBC9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
