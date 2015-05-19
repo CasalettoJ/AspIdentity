@@ -18,7 +18,7 @@
 
             this.GetUserID = function (user) {
                 var updateUser = $q.defer();
-                $http.get("/api/user", { params: { id: 1 } })
+                $http.get("/api/user", { params: { id: "9e988d5f-8de3-4f4c-9414-8fcdcaafdbc1" } })
                 .success(function (data) {
                     updateUser.resolve(data);
                 })
