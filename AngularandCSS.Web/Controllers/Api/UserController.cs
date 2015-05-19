@@ -14,13 +14,13 @@ namespace AngularandCSS.Web.Controllers.Api
         // GET api/<controller>
         public IEnumerable<User> Get()
         {
-            return db.Users.OrderBy(a => a.Username);
+            return db.Users.OrderBy(a => a.UserName);
         }
 
         // GET api/<controller>/5
-        public User Get(int id)
+        public User Get(string id)
         {
-            return db.Users.Where(a => a.UserID == id).SingleOrDefault();
+            return db.Users.Where(a => a.Id == id).SingleOrDefault();
         }
 
         // POST api/<controller>
