@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngularandCSS.Data", "Angul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngularandCSS.Web", "AngularandCSS.Web\AngularandCSS.Web.csproj", "{744242DF-7DC7-4A51-8C6E-92ACC844CBC9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngularandCSS.Service", "AngularandCSS.Service\AngularandCSS.Service.csproj", "{A1CBFE92-9112-434A-85B4-F04435355985}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{744242DF-7DC7-4A51-8C6E-92ACC844CBC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{744242DF-7DC7-4A51-8C6E-92ACC844CBC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{744242DF-7DC7-4A51-8C6E-92ACC844CBC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1CBFE92-9112-434A-85B4-F04435355985}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1CBFE92-9112-434A-85B4-F04435355985}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1CBFE92-9112-434A-85B4-F04435355985}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1CBFE92-9112-434A-85B4-F04435355985}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
