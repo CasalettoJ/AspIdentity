@@ -347,6 +347,7 @@
     <Content Include="bower_components\jquery\src\var\toString.js" />
     <Content Include="bower_components\jquery\src\wrap.js" />
     <Content Include="Global.asax" />
+    <Content Include="Partials\_register.html" />
     <Content Include="Scripts\MyApp.js" />
     <Content Include="Scripts\MyAppControllers.js" />
     <Content Include="Scripts\MyAppDirectives.js" />

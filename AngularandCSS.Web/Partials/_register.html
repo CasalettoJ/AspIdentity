@@ -1,0 +1,17 @@
+﻿<form ng-submit="submitRegister()" name="RegisterForm" novalidate style="max-width:500px;margin:0 auto;float:none;">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Register</div>
+        <div class="panel-body">
+            <label for="username">Username:</label>
+            <input ng-model="registerUsername" class="form-control" name="username" required type="text" /><span ng-if="RegisterForm.username.$error.required" class="pull-right error-icon" style="padding:3px;">Required</span><br /><br />
+
+            <label for="password">Password:</label>
+            <input ng-model="registerPassword" class="form-control" name="password" type="password" required /><span ng-if="RegisterForm.password.$error.required" class="pull-right error-icon" style="padding:3px;">Required</span><br /><br />
+
+            <label for="email">Email:</label>
+            <input ng-model="registerEmail" class="form-control" name="email" type="email" required /><span ng-if="RegisterForm.email.$error.required" class="pull-right error-icon" style="padding:3px;">Required</span><br /><br />
+
+            <button class="btn btn-lg btn-success pull-right" type="submit" ng-disabled="RegisterForm.$invalid" style="width:100%;">Register</button>
+        </div>
+    </div>
+</form>

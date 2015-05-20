@@ -25,7 +25,7 @@ namespace AngularandCSS.Data.Migrations
             //context.Roles.AddOrUpdate(new IdentityRole() { Name = "Moderator" });
             //context.Roles.AddOrUpdate(new IdentityRole() { Name = "Other" });
 
-            context.SaveChanges();
+            //context.SaveChanges();
         }
     }
 }
