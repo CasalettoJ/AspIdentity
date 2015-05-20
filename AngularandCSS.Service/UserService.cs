@@ -53,6 +53,11 @@ namespace AngularandCSS.Service
             }
         }
 
+        public async Task DeleteUser(User user)
+        {
+            await _userManager.DeleteAsync(user);
+        }
+
 
         public async Task SignIn(User user, bool isPersistant, IAuthenticationManager authenticationManager)
         {
