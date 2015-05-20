@@ -96,5 +96,24 @@ namespace AngularandCSS.Web.Controllers.Api
         //public void Delete(int id)
         //{
         //}
+            //  if (ModelState.IsValid)
+            //{
+            //    RegistrationResultViewModel result = await _userService.Register(model);
+            //    if(result.Result.Succeeded)
+            //    {
+            //        //await _userService.SignIn(result.User, false, AuthenticationManager);
+            //        return new HttpResponseMessage(HttpStatusCode.OK);
+            //    }
+            //    else
+            //    {
+            //        HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            //        response.Content = new StringContent("Failed to create an account: " + result.Result.Errors.ToString());
+            //        return response;
+            //    }
+            //}
+            //else
+            //{
+            //    HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
+            //    return response;
     }
 }
