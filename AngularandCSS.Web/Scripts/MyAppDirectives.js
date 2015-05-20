@@ -26,7 +26,7 @@
                 $scope.submitRegister = function () {
                     var RegisterViewModel = { UserName: $scope.registerUsername, Email: $scope.registerEmail, Password: $scope.registerPassword };
                     UserRepositoryService.RegisterUser(RegisterViewModel).then(function () {
-                        alert("AyyLmao");
+                        location.reload();
                     });
                 }
             }
