@@ -7,6 +7,7 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using System.Web.Http;
+using AngularandCSS.Web.App_Start;
 
 namespace AngularandCSS.Web
 {
@@ -17,7 +18,8 @@ namespace AngularandCSS.Web
             // Code that runs on application startup
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);            
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            AutofacConfig.RegisterMVC();
         }
     }
 }
