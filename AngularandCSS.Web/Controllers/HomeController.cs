@@ -33,6 +33,12 @@ namespace AngularandCSS.Web.Controllers
             return View();
         }
 
+        [Authorize]
+        public ActionResult SecretPage()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
@@ -42,17 +48,24 @@ namespace AngularandCSS.Web.Controllers
                 if (result.Result.Succeeded)
                 {
                     await _userService.SignIn(result.User, false, AuthenticationManager);
-                    return View("Index");
+                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    return View("Index");
+                    return RedirectToAction("Index");
                 }
             }
             else
             {
-                return View("Index");
+                return RedirectToAction("Index");
             }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> Logout()
+        {
+            await _userService.SignOut(AuthenticationManager);
+            return RedirectToAction("Index");
         }
 
     }

@@ -11,8 +11,7 @@ namespace AngularandCSS.Web
         {
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
-                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/")
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie
             });
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
         }

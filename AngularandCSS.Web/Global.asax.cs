@@ -17,6 +17,7 @@ namespace AngularandCSS.Web
         {
             // Code that runs on application startup
             AreaRegistration.RegisterAllAreas();
+            GlobalFilters.Filters.Add(new HandleErrorAttribute());
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             AutofacConfig.RegisterMVC();

@@ -29,6 +29,19 @@
                 return registerUser.promise;
             };
 
+            this.Logout = function () {
+                var logoutUser = $q.defer();
+                $http.get("/Home/Logout")
+                .success(function (data) {
+                    logoutUser.resolve(data);
+                    alert("Logout Successful.");
+                })
+                .error(function (data, status) {
+                    logoutUser.resolve(data);
+                });
+                return logoutUser.promise;
+            }
+
             this.GetUserID = function (user) {
                 var updateUser = $q.defer();
                 $http.get("/api/user", { params: { id: "73f2347f-d3f0-4df5-baa0-cbb83a2f382a" } })

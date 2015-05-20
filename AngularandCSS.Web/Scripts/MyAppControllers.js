@@ -13,6 +13,11 @@
                     $scope.getIDResults = data;
                 });
             };
+            $scope.Logout = function () {
+                UserRepositoryService.Logout().then(function (data) {
+                    location.reload();
+                });
+            }
         }
     ]);
 }());

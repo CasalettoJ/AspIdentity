@@ -4,18 +4,21 @@
 }
 
 <div ng-controller="HomeController" ng-cloak>
-    <div style="margin: 0 auto;">
-        <div class="col-sm-6">
-            <login></login>
-        </div>
-        <div class="col-sm-6">
-            <register></register>
-        </div>
-    </div>
-
     @if (User.Identity.IsAuthenticated)
     {
         <h1>Logged in as @User.Identity.Name</h1>
+        <button class="btn btn-danger btn-lg" ng-click="Logout()">Logout</button>
+    }
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div style="margin: 0 auto;">
+            <div class="col-sm-6">
+                <login></login>
+            </div>
+            <div class="col-sm-6">
+                <register></register>
+            </div>
+        </div>
     }
 
     <button class="btn btn-lg btn-danger" ng-click="TestAPI()">Test API</button>
