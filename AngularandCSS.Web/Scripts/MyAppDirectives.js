@@ -13,6 +13,10 @@
                     var LoginViewModel = { UserName: $scope.loginUsername, Password: $scope.loginPassword, Email: null, RememberMe: false };
                     UserRepositoryService.Login(LoginViewModel);
                 }
+                $scope.submitDeletion = function () {
+                    var LoginViewModel = { UserName: $scope.loginUsername, Password: $scope.loginPassword, Email: null, RememberMe: false };
+                    UserRepositoryService.DeleteUser(LoginViewModel);
+                }
             }
         };
     }])

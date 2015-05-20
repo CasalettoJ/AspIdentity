@@ -3,7 +3,7 @@
     angular
     .module('MyApp')
     .service("UserRepositoryService",
-        ['$http', '$q', '$window', function ($http, $q, $window) {
+        ['$http', '$q', '$window', '$location', function ($http, $q, $window, $location) {
             this.GetUser = function () {
                 return $http.get("/api/user").then(function (data, status) {
                     return { Data: data, Status: status, Error: null };
@@ -32,9 +32,17 @@
                 });
             };
 
+            this.DeleteUser = function (LoginViewModel) {
+                return $http.post("/api/delete", LoginViewModel).then(function (data) {
+                    document.location.href = "/";
+                }, function (data) {
+                    //document.location.href = "/";
+                });
+            };
+
             this.Logout = function () {
                 return $http.get("/api/logout").then(function (data) {
-                    location.reload();
+                    document.location.href = "/";
                 });
             }
 

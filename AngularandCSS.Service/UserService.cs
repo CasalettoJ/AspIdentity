@@ -53,9 +53,17 @@ namespace AngularandCSS.Service
             }
         }
 
-        public async Task DeleteUser(User user)
+        public async Task<bool> DeleteUser(User user)
         {
-            await _userManager.DeleteAsync(user);
+            IdentityResult result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 
