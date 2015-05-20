@@ -5,54 +5,44 @@
     .service("UserRepositoryService",
         ['$http', '$q', '$window', function ($http, $q, $window) {
             this.GetUser = function () {
-                var getUser = $q.defer();
-                $http.get("/api/user")
-                .success(function (data, status) {
-                    getUser.resolve(data);
-                })
-                .error(function (data, status) {
-                        getUser.resolve(data);
+                return $http.get("/api/user").then(function (data, status) {
+                    return { Data: data, Status: status, Error: null };
+                }, function (data, status) {
+                        return { Data: data, Status: status, Error: "You don't have permission to view this." };
                 });
-                return getUser.promise;
+            };
+
+            this.GetUserID = function (user) {
+                return $http.get("/api/user", { params: { id: "73f2347f-d3f0-4df5-baa0-cbb83a2f382a" } }).then(function (data, status) {
+                    var error = null;
+                    if (data == null) {
+                        error = "Unable to find user.";
+                    }
+                    return { Data: data, Status: status, Error: error };
+                }, function (data, status) {
+                    return { Data: data, Status: status, Error: "You don't have permission to view this." };
+                });
             };
 
             this.RegisterUser = function (registeruser) {
-                var registerUser = $q.defer();
-                $http.post("/Home/Register", registeruser )
-                .success(function (data) {
-                    registerUser.resolve(data);
-                    alert("Registered and logged in as user: " + registeruser.UserName);
-                })
-                .error(function (data, status) {
-                    registerUser.resolve(data);
+                return $http.post("/api/register", registeruser).then(function (data) {
+                    location.reload();
+                }, function (data, status) {
+                    return data;
                 });
-                return registerUser.promise;
             };
 
             this.Logout = function () {
-                var logoutUser = $q.defer();
-                $http.get("/Home/Logout")
-                .success(function (data) {
-                    logoutUser.resolve(data);
-                    alert("Logout Successful.");
-                })
-                .error(function (data, status) {
-                    logoutUser.resolve(data);
+                return $http.get("/api/logout").then(function (data) {
+                    location.reload();
                 });
-                return logoutUser.promise;
             }
 
-            this.GetUserID = function (user) {
-                var updateUser = $q.defer();
-                $http.get("/api/user", { params: { id: "73f2347f-d3f0-4df5-baa0-cbb83a2f382a" } })
-                .success(function (data) {
-                    updateUser.resolve(data);
-                })
-                .error(function (data, status) {
-                        updateUser.resolve(data);
+            this.Login = function (LoginViewModel) {
+                return $http.post("/api/login", LoginViewModel).then(function (data) {
+                    location.reload();
                 });
-                return updateUser.promise;
-            };
+            }
 
         }])
 }());

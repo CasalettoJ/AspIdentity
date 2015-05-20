@@ -14,10 +14,12 @@ using System.Web.Http;
 
 namespace AngularandCSS.Web.Controllers.Api
 {
-    [Authorize]
+    
     public class UserController : ApiController
     {
         private DataContext db = new DataContext();
+
+        private IAuthenticationManager AuthenticationManager { get { return Request.GetOwinContext().Authentication; } }
 
         private UserService _userService { get; set; }
 
@@ -26,16 +28,58 @@ namespace AngularandCSS.Web.Controllers.Api
             _userService = UserService;
         }
 
+        [Authorize]
         // GET api/<controller>
         public IEnumerable<User> Get()
         {
             return db.Users.OrderBy(a => a.UserName).ToList();
         }
 
+        [Authorize]
         // GET api/<controller>/5
         public User Get(string id)
         {
             return db.Users.Where(a => a.Id == id).SingleOrDefault();
+        }
+
+        [Route("api/login")]
+        public async Task<HttpResponseMessage> Login([FromBody] LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await _userService.GetUserFromViewModel(model);
+                if (user != null)
+                {
+                    await _userService.SignIn(user, false, AuthenticationManager);
+                    return new HttpResponseMessage(HttpStatusCode.OK);
+                }
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
+        }
+
+        [Route("api/logout")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> Logout()
+        {
+            await _userService.SignOut(AuthenticationManager);
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+        [Route("api/register")]
+        public async Task<HttpResponseMessage> Register([FromBody] RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                RegistrationResultViewModel result = await _userService.Register(model);
+                if (result.Result.Succeeded)
+                {
+                    await _userService.SignIn(result.User, false, AuthenticationManager);
+                    return new HttpResponseMessage(HttpStatusCode.OK);
+                }
+                return new HttpResponseMessage(HttpStatusCode.Conflict);
+            }
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
 
         //// POST api/<controller>

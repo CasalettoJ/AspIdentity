@@ -10,7 +10,8 @@
                 $scope.loginUsername = "";
                 $scope.loginPassword = "";
                 $scope.submitLogin = function () {
-                    alert("Ayy");
+                    var LoginViewModel = { UserName: $scope.loginUsername, Password: $scope.loginPassword, Email: null, RememberMe: false };
+                    UserRepositoryService.Login(LoginViewModel);
                 }
             }
         };
@@ -25,8 +26,8 @@
                 $scope.registerEmail = "";
                 $scope.submitRegister = function () {
                     var RegisterViewModel = { UserName: $scope.registerUsername, Email: $scope.registerEmail, Password: $scope.registerPassword };
-                    UserRepositoryService.RegisterUser(RegisterViewModel).then(function () {
-                        location.reload();
+                    UserRepositoryService.RegisterUser(RegisterViewModel).then(function (data) {
+                        $scope.registerError = data;
                     });
                 }
             }
