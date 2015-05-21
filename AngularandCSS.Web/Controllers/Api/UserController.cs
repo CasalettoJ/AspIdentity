@@ -49,7 +49,11 @@ namespace AngularandCSS.Web.Controllers.Api
         {
             if (ModelState.IsValid)
             {
-                Data.User user = await _userService.GetUserFromViewModel(model);
+                if (await _userService.IsUserLockedOut(model.UserName))
+                {
+                    return _response = Request.CreateResponse(HttpStatusCode.Forbidden, "This account has attempted access too many times.  Please wait a few minutes and try again.");
+                }
+                Data.User user = await _userService.GetUserFromViewModelForLogin(model);
                 if (user != null)
                 {
                     if (await _userService.SignIn(user, false, AuthenticationManager))
@@ -83,7 +87,7 @@ namespace AngularandCSS.Web.Controllers.Api
                     //await _userService.SignIn(result.User, false, AuthenticationManager);
                     return _response = Request.CreateResponse(HttpStatusCode.OK, "User " + model.UserName + " created successfully.  An activation email has been sent to " + model.Email + ".");
                 }
-                return _response = Request.CreateResponse(HttpStatusCode.NotFound, result.Result.Errors);
+                return _response = Request.CreateResponse(HttpStatusCode.BadRequest, result.Result.Errors);
             }
             return _response = Request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
         }

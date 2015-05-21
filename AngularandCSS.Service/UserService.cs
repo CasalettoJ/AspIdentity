@@ -30,10 +30,13 @@ namespace AngularandCSS.Service
             {
                 RequiredLength = 6
             };
+            _userManager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(10);
+            _userManager.MaxFailedAccessAttemptsBeforeLockout = 5;
+            _userManager.UserLockoutEnabledByDefault = true;
             _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(dataContext));
         }
 
-        #region Signin / signout / register / delete
+       #region Signin / signout / register / delete
 
         public async Task<RegistrationResultViewModel> Register(RegisterViewModel model)
         {
@@ -45,6 +48,15 @@ namespace AngularandCSS.Service
                     UserName = model.UserName,
                     CustomEmailConfirmation = false
                 };
+                IdentityResult passwordResult = await CheckPasswordValidity(model.Password);
+                if(!passwordResult.Succeeded)
+                {
+                    return new RegistrationResultViewModel()
+                    {
+                        Result = passwordResult,
+                        User = newUser
+                    };
+                }
                 IdentityResult result = await _userManager.CreateAsync(newUser, model.Password);
                 if(result.Succeeded)
                 {
@@ -101,10 +113,15 @@ namespace AngularandCSS.Service
             {
                 if (_userManager.FindByIdAsync(user.Id).Result.CustomEmailConfirmation)
                 {
-                    authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                    var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-                    authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistant }, identity);
-                    return true;
+                    if (!await IsUserLockedOut(user.UserName))
+                    {
+                        authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+                        var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+                        authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistant }, identity);
+                        await _userManager.ResetAccessFailedCountAsync(user.Id);
+                        return true;
+                    }
+                    return false;
                 }
                 else
                 {
@@ -301,11 +318,20 @@ namespace AngularandCSS.Service
 
         #region user database functions
 
-        public async Task<User> GetUserFromViewModel(LoginViewModel model)
+        public async Task<User> GetUserFromViewModelForLogin(LoginViewModel model)
         {
             try
             {
-                return await _userManager.FindAsync(model.UserName, model.Password);
+                User user = await _userManager.FindAsync(model.UserName, model.Password);
+                if(user == null)
+                {
+                    User userToLockout = await GetUserFromUsername(model.UserName);
+                    if (userToLockout != null)
+                    {
+                        await _userManager.AccessFailedAsync(userToLockout.Id);
+                    }
+                }
+                return user;
             }
             catch (Exception ex)
             {
@@ -314,11 +340,42 @@ namespace AngularandCSS.Service
             }
         }
 
+        public async Task<bool> IsUserLockedOut(string username)
+        {
+            try
+            {
+                User user = await GetUserFromUsername(username);
+                if (user != null)
+                {
+                    return await _userManager.IsLockedOutAsync(user.Id);
+                }
+                return false;
+            }
+            catch(Exception ex)
+            {
+                //Log here.
+                return false;
+            }
+        }
+
         public async Task<User> GetUserFromEmail(string email)
         {
             try
             {
                 return await _userManager.FindByEmailAsync(email);
+            }
+            catch (Exception ex)
+            {
+                //Log here.
+                return null;
+            }
+        }
+
+        public async Task<User> GetUserFromUsername(string username)
+        {
+            try
+            {
+                return await _userManager.FindByNameAsync(username);
             }
             catch (Exception ex)
             {
