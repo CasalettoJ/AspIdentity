@@ -85,26 +85,38 @@ namespace AngularandCSS.Web.Controllers.Api
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
 
-        [Route("api/delete")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> DeleteUser([FromBody] LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                Data.User user = await _userService.GetUserFromViewModel(model);
-                if(user != null)
-                {
-                    bool deleted = await _userService.DeleteUser(user);
-                    if(deleted)
-                    {
-                        return new HttpResponseMessage(HttpStatusCode.OK);
-                    }
-                    return new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                }
-                return new HttpResponseMessage(HttpStatusCode.NotFound);
-            }
-            return new HttpResponseMessage(HttpStatusCode.BadRequest);
-        }
+        //[Route("api/delete")]
+        //[HttpPost]
+        //public async Task<HttpResponseMessage> DeleteUser([FromBody] LoginViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        Data.User user = await _userService.GetUserFromViewModel(model);
+        //        if(user != null)
+        //        {
+        //            bool deleted = await _userService.DeleteUser(user);
+        //            if(deleted)
+        //            {
+        //                return new HttpResponseMessage(HttpStatusCode.OK)
+        //                {
+        //                    Content = new StringContent("User " + model.UserName + " deleted successfully.")
+        //                };
+        //            }
+        //            return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+        //            {
+        //                Content = new StringContent("User " + model.UserName + " could not be deleted.")
+        //            };
+        //        }
+        //        return new HttpResponseMessage(HttpStatusCode.NotFound)
+        //        {
+        //            Content = new StringContent("Invalid username / password given.")
+        //        };
+        //    }
+        //    return new HttpResponseMessage(HttpStatusCode.BadRequest)
+        //    {
+        //        Content = new StringContent("Invalid username / password given.")
+        //    };
+        //}
 
         //// POST api/<controller>
         //public async Task<HttpResponseMessage> Post([FromBody] RegisterViewModel model)

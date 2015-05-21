@@ -59,32 +59,32 @@ namespace AngularandCSS.Service
             }
         }
 
-        public async Task<bool> DeleteUser(User user)
-        {
-            try
-            {
-                IdentityResult result = await _userManager.DeleteAsync(user);
-                if (result.Succeeded)
-                {
-                    EmailConfirmation confirmation = _dataContext.EmailConfirmations.Where(ec => ec.UserID == user.Id).FirstOrDefault();
-                    if (confirmation != null)
-                    {
-                        _dataContext.EmailConfirmations.Remove(confirmation);
-                        _dataContext.SaveChanges();
-                    }
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch
-            {
-                //log here.
-                return false;
-            }
-        }
+        //public async Task<bool> DeleteUser(User user)
+        //{
+        //    try
+        //    {
+        //        IdentityResult result = await _userManager.DeleteAsync(user);
+        //        if (result.Succeeded)
+        //        {
+        //            EmailConfirmation confirmation = _dataContext.EmailConfirmations.Where(ec => ec.UserID == user.Id).FirstOrDefault();
+        //            if (confirmation != null)
+        //            {
+        //                _dataContext.EmailConfirmations.Remove(confirmation);
+        //                _dataContext.SaveChanges();
+        //            }
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        //log here.
+        //        return false;
+        //    }
+        //}
 
 
         public async Task<bool> SignIn(User user, bool isPersistant, IAuthenticationManager authenticationManager)

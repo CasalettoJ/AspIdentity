@@ -46,7 +46,7 @@ namespace AngularandCSS.Web.Controllers
             }
             else
             {
-                TempData["Activation"] = "Activation was unsuccessful.  Attempt to login to send a new activation email.";
+                TempData["Activation"] = "Activation was unsuccessful.  Attempt a login to send a new activation email.";
             }
             return RedirectToAction("Index");
         }

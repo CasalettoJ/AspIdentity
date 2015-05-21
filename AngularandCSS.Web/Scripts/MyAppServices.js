@@ -32,13 +32,13 @@
                 });
             };
 
-            this.DeleteUser = function (LoginViewModel) {
-                return $http.post("/api/delete", LoginViewModel).then(function (data) {
-                    document.location.href = "/";
-                }, function (data) {
-                    //document.location.href = "/";
-                });
-            };
+            //this.DeleteUser = function (LoginViewModel) {
+            //    return $http.post("/api/delete", LoginViewModel).then(function (data) {
+            //        document.location.href = "/";
+            //    }, function (data) {
+            //        //document.location.href = "/";
+            //    });
+            //};
 
             this.Logout = function () {
                 return $http.get("/api/logout").then(function (data) {
