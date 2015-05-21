@@ -1,6 +1,7 @@
 ﻿using AngularandCSS.Data;
 using AngularandCSS.Service;
 using AngularandCSS.Service.ViewModels;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using System;
@@ -18,6 +19,7 @@ namespace AngularandCSS.Web.Controllers.Api
     public class UserController : ApiController
     {
         private DataContext db = new DataContext();
+        private HttpResponseMessage _response { get; set; }
 
         private IAuthenticationManager AuthenticationManager { get { return Request.GetOwinContext().Authentication; } }
 
@@ -47,22 +49,23 @@ namespace AngularandCSS.Web.Controllers.Api
         {
             if (ModelState.IsValid)
             {
-                User user = await _userService.GetUserFromViewModel(model);
+                Data.User user = await _userService.GetUserFromViewModel(model);
                 if (user != null)
                 {
                     if (await _userService.SignIn(user, false, AuthenticationManager))
                     {
-                        return new HttpResponseMessage(HttpStatusCode.OK);
+                        return _response = Request.CreateResponse(HttpStatusCode.OK);
                     }
-                    return new HttpResponseMessage(HttpStatusCode.Forbidden);
+                    return _response = Request.CreateResponse(HttpStatusCode.Forbidden, "This account requires activation.  A new activation email has been sent.");
                 }
-                return new HttpResponseMessage(HttpStatusCode.NotFound);
+                return _response = Request.CreateResponse(HttpStatusCode.NotFound, "Invalid username / password given.");
             }
-            return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            return _response = Request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
         }
 
         [Route("api/logout")]
         [HttpGet]
+        [Authorize]
         public async Task<HttpResponseMessage> Logout()
         {
             await _userService.SignOut(AuthenticationManager);
@@ -77,12 +80,49 @@ namespace AngularandCSS.Web.Controllers.Api
                 RegistrationResultViewModel result = await _userService.Register(model);
                 if (result.Result.Succeeded)
                 {
-                    await _userService.SignIn(result.User, false, AuthenticationManager);
-                    return new HttpResponseMessage(HttpStatusCode.OK);
+                    //await _userService.SignIn(result.User, false, AuthenticationManager);
+                    return _response = Request.CreateResponse(HttpStatusCode.OK, "User " + model.UserName + " created successfully.  An activation email has been sent to " + model.Email + ".");
                 }
-                return new HttpResponseMessage(HttpStatusCode.Conflict);
+                return _response = Request.CreateResponse(HttpStatusCode.NotFound, result.Result.Errors);
             }
-            return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            return _response = Request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
+        }
+
+        [Route("api/recover")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> Recover(string email)
+        {
+            if(!string.IsNullOrEmpty(email))
+            {
+                Data.User user = await _userService.GetUserFromEmail(email);
+                if (user != null)
+                {
+                    await _userService.SendPasswordRecoveryEmail(user);
+                    return _response = Request.CreateResponse(HttpStatusCode.OK, "Recovery email sent.  The request will expire in 1 day.");
+                }
+                return _response = Request.CreateResponse(HttpStatusCode.NotFound, "No user with the given email exists.");
+            }
+            return _response = Request.CreateResponse(HttpStatusCode.BadRequest, "No valid email given.");
+        }
+
+        [Route("api/recover/request")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> RecoverRequest(string password, string userID, string recoveryToken)
+        {
+            if(!string.IsNullOrEmpty(password))
+            {
+                IdentityResult result = await _userService.CheckPasswordValidity(password);
+                if (result.Succeeded)
+                {
+                    if (await _userService.SetUserPassword(userID, password, recoveryToken))
+                    {
+                        return _response = Request.CreateResponse(HttpStatusCode.OK, "Your password has been reset.");
+                    }
+                    return _response = Request.CreateResponse(HttpStatusCode.Forbidden, "Your password could not be reset.");
+                }
+                return _response = Request.CreateResponse(HttpStatusCode.BadRequest, result.Errors);
+            }
+            return _response = Request.CreateResponse(HttpStatusCode.BadRequest, "No password given.");
         }
 
         //[Route("api/delete")]
@@ -117,39 +157,5 @@ namespace AngularandCSS.Web.Controllers.Api
         //        Content = new StringContent("Invalid username / password given.")
         //    };
         //}
-
-        //// POST api/<controller>
-        //public async Task<HttpResponseMessage> Post([FromBody] RegisterViewModel model)
-        //{
-        //} 
-
-        //// PUT api/<controller>/5
-        //public void Put(int id, [FromBody]string value)
-        //{
-        //}
-
-        //// DELETE api/<controller>/5
-        //public void Delete(int id)
-        //{
-        //}
-            //  if (ModelState.IsValid)
-            //{
-            //    RegistrationResultViewModel result = await _userService.Register(model);
-            //    if(result.Result.Succeeded)
-            //    {
-            //        //await _userService.SignIn(result.User, false, AuthenticationManager);
-            //        return new HttpResponseMessage(HttpStatusCode.OK);
-            //    }
-            //    else
-            //    {
-            //        HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.BadRequest);
-            //        response.Content = new StringContent("Failed to create an account: " + result.Result.Errors.ToString());
-            //        return response;
-            //    }
-            //}
-            //else
-            //{
-            //    HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
-            //    return response;
     }
 }

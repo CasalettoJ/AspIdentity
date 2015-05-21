@@ -1,0 +1,13 @@
+﻿<form ng-submit="submitRecover()" name="recoverForm" novalidate style="max-width:500px;margin:0 auto;float:none;">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Reset Password</div>
+        <div class="panel-body">
+            <label for="password">New Password:</label>
+            <input ng-model="recoverPassword" class="form-control" name="password" id="password" required type="password" /><span ng-if="recoverForm.password.$error.required" class="pull-right error-icon" style="padding:3px;">Required</span><br /><br />
+             
+            <button class="btn btn-lg btn-success pull-right" type="submit" ng-disabled="recoverForm.$invalid" style="width:100%;">Recover</button>
+            <!--Deletion testing-->
+            <!--<button class="btn btn-lg btn-danger pull-left" type="button" ng-disabled="recoverForm.$invalid"  ng-click="submitDeletion()">Delete Account</button>-->
+        </div>
+    </div>
+</form>

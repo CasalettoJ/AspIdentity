@@ -29,5 +29,10 @@
 
 
         }
+    ])
+    .controller('RecoverController', [
+        '$scope', 'UserRepositoryService',
+        function ($scope, UserRepositoryService) {
+        }
     ]);
 }());

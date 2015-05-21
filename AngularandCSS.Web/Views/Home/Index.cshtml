@@ -4,31 +4,29 @@
 }
 
 <div ng-controller="HomeController" ng-cloak>
-    @if(ViewBag.Activation != null)
-    {
-        <div class="info">@ViewBag.Activation</div>
-    }
-    @if (User.Identity.IsAuthenticated)
-    {
-        <h1>Logged in as @User.Identity.Name</h1>
-        <button class="btn btn-danger btn-lg" ng-click="Logout()">Logout</button>
-    }
-    @if (!User.Identity.IsAuthenticated)
-    {
-        <div style="margin: 0 auto;">
-            <div class="col-sm-6">
-                <login></login>
-            </div>
-            <div class="col-sm-6">
-                <register></register>
-            </div>
-        </div>
-    }
+            @if (ViewBag.SystemMessage != null)
+            {
+                <div class="info">@ViewBag.SystemMessage</div>
+            }
+            @if (User.Identity.IsAuthenticated)
+            {
+                <h1>Logged in as @User.Identity.Name</h1>
+                <button class="btn btn-danger btn-lg" ng-click="Logout()">Logout</button>
+                <a href="/Home/SecretPage">Go to the members only page.</a>
+                <button class="btn btn-lg btn-danger" ng-click="TestAPI()">Test API</button>
+                <p><h1>Get/User</h1><br /> {{getResults}}</p>
+                <p><h1>Get/User/1</h1><br /> {{getIDResults}}</p>
+            }
+            @if (!User.Identity.IsAuthenticated)
+            {
 
-    <button class="btn btn-lg btn-danger" ng-click="TestAPI()">Test API</button>
-    <p><h1>Get/User</h1><br /> {{getResults}}</p>
-    <p><h1>Get/User/1</h1><br /> {{getIDResults}}</p>
-
+                        <div class="col-sm-6">
+                            <login></login>
+                        </div>
+                        <div class="col-sm-6">
+                            <register></register>
+                        </div>
+            }
 
 </div>
 

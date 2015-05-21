@@ -17,6 +17,7 @@ namespace AngularandCSS.Service
     {
         private static UserManager<User> _userManager { get; set; }
         private static RoleManager<IdentityRole> _roleManager { get; set; }
+        private EmailFactory _emailFactory = new EmailFactory();
 
         public UserService( DataContext dataContext) : base(dataContext)
         {
@@ -24,6 +25,10 @@ namespace AngularandCSS.Service
             _userManager.UserValidator = new UserValidator<User>(_userManager){
                 RequireUniqueEmail = true,
                 AllowOnlyAlphanumericUserNames = true
+            };
+            _userManager.PasswordValidator = new PasswordValidator()
+            {
+                RequiredLength = 6
             };
             _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(dataContext));
         }
@@ -41,7 +46,10 @@ namespace AngularandCSS.Service
                     CustomEmailConfirmation = false
                 };
                 IdentityResult result = await _userManager.CreateAsync(newUser, model.Password);
-                await SendConfirmationEmail(newUser);
+                if(result.Succeeded)
+                {
+                    await SendConfirmationEmail(newUser);
+                }
                 return new RegistrationResultViewModel()
                 {
                     Result = result,
@@ -130,7 +138,7 @@ namespace AngularandCSS.Service
 
         #endregion
 
-        #region user confirmation / user password actions
+        #region user confirmation / user password  actions
 
         public async Task SendConfirmationEmail(User user)
         {
@@ -152,14 +160,114 @@ namespace AngularandCSS.Service
                 {
                     confirmationToken = confirmation.ConfirmationToken;
                 }
-                EmailFactory.SendConfirmationEmail(user.Email, user.Id, confirmationToken);
+                _emailFactory.SendConfirmationEmail(user, confirmationToken);
             }
-            catch
+            catch (Exception ex)
             {
                 //Log here.
             }
         }
 
+        public async Task SendPasswordRecoveryEmail(User user)
+        {
+            try
+            {
+                string recoveryToken = BCryptHelper.GenerateSalt();
+                PasswordRecover recovery = _dataContext.PasswordRecovers.Where(pr => pr.UserID == user.Id).FirstOrDefault();
+                if (recovery == null)
+                {
+                    PasswordRecover newRecovery = new PasswordRecover()
+                    {
+                        RecoveryToken = recoveryToken,
+                        UserID = user.Id,
+                        ValidUntil = DateTime.UtcNow.AddDays(1)
+                    };
+                    _dataContext.PasswordRecovers.Add(newRecovery);
+                    _dataContext.SaveChanges();
+                }
+                else
+                {
+                    recovery.ValidUntil = DateTime.UtcNow.AddDays(1);
+                    recovery.RecoveryToken = recoveryToken;
+                    _dataContext.Entry(recovery).State = System.Data.Entity.EntityState.Modified;
+                    _dataContext.SaveChanges();
+                }
+                _emailFactory.SendPasswordRecoveryEmail(user, recoveryToken);
+            }
+            catch (Exception ex)
+            {
+                //Log here.
+            }
+        }
+
+
+        //Resets a user's password to a new password and returns whether this was a successful action or not.  If a password recovery request exists in the database,
+        //then it is removed.  This is only ever used for password recovery requests.
+        public async Task<bool> SetUserPassword(string userID, string newPassword, string recoveryToken)
+        {
+            try
+            {
+                PasswordRecover recover = _dataContext.PasswordRecovers.Where(pr => pr.UserID == userID && pr.RecoveryToken == recoveryToken).FirstOrDefault();
+                if (recover != null)
+                {
+                    IdentityResult result = await _userManager.RemovePasswordAsync(userID);
+                    if (result.Succeeded)
+                    {
+                        IdentityResult additionResult = await _userManager.AddPasswordAsync(userID, newPassword);
+                        if (additionResult.Succeeded)
+                        {
+                            _dataContext.PasswordRecovers.Remove(recover);
+                            _dataContext.SaveChanges();
+                            return true;
+                        }
+                        return false;
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                //Log here.
+                return false;
+            }
+        }
+
+
+        //Takes in a user's ID and a recovery token and checks the recovery table to make sure that such a request by a user exists, that the token
+        //is correct, and that the request has not expired.
+        public async Task<bool> CheckRecoveryValidity(string userID, string recoveryToken)
+        {
+            try
+            {
+                PasswordRecover recovery = _dataContext.PasswordRecovers.Where(pr => pr.UserID == userID && pr.RecoveryToken == recoveryToken && DateTime.UtcNow <= pr.ValidUntil).FirstOrDefault();
+                if (recovery != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                //Log here.
+                return false;
+            }
+        }
+
+        //Determines whether a proposed password is valid for a given user and returns true or false.
+        public async Task<IdentityResult> CheckPasswordValidity(string password)
+        {
+            try
+            {
+                return await _userManager.PasswordValidator.ValidateAsync(password);
+            }
+            catch (Exception ex)
+            {
+                //Log here.
+                return new IdentityResult("There was an issue checking the validity of the password");
+            }
+        }
+
+        //Activates a user account if the confirmation token given is correct and removes the confirmation request from the database.
         public async Task<bool> ConfirmEmail(string userID, string confirmationToken)
         {
             try
@@ -182,7 +290,7 @@ namespace AngularandCSS.Service
                     return false;
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 //Log here.
                 return false;
@@ -198,6 +306,33 @@ namespace AngularandCSS.Service
             try
             {
                 return await _userManager.FindAsync(model.UserName, model.Password);
+            }
+            catch (Exception ex)
+            {
+                //Log here.
+                return null;
+            }
+        }
+
+        public async Task<User> GetUserFromEmail(string email)
+        {
+            try
+            {
+                return await _userManager.FindByEmailAsync(email);
+            }
+            catch (Exception ex)
+            {
+                //Log here.
+                return null;
+            }
+        }
+
+        public async Task<User> GetUserFromID(string userID)
+        {
+            try
+            {
+                User user = await _userManager.FindByIdAsync(userID);
+                return user;
             }
             catch (Exception ex)
             {

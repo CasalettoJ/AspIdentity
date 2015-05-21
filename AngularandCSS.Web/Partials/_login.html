@@ -9,6 +9,12 @@
             <input ng-model="loginPassword" class="form-control" name="password" id="password" type="password" required /><span ng-if="loginForm.password.$error.required" class="pull-right error-icon" style="padding:3px;">Required</span><br /><br />
 
             <button class="btn btn-lg btn-success pull-right" type="submit" ng-disabled="loginForm.$invalid" style="width:100%;">Login</button>
+            <br />
+            <br />
+            <hr />
+            <label for="recoverRequest">Email:</label>
+            <input ng-model="recoverRequest" class="form-control" name="recoverRequest" id="recoverRequest" type="email"/><br /><br />
+            <button class="btn btn-lg btn-warning pull-left" type="button" style="width:100%;" ng-disabled="recoverRequest == ''" ng-click="submitRecoveryRequest()">Recover Password</button>
             <!--Deletion testing-->
             <!--<button class="btn btn-lg btn-danger pull-left" type="button" ng-disabled="loginForm.$invalid"  ng-click="submitDeletion()">Delete Account</button>-->
         </div>

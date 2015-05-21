@@ -26,11 +26,29 @@
 
             this.RegisterUser = function (registeruser) {
                 return $http.post("/api/register", registeruser).then(function (data) {
-                    location.reload();
+                    return data;
                 }, function (data, status) {
                     return data;
                 });
             };
+
+            this.Recover = function (email) {
+                return $http.get("/api/recover", { params: { email: email }}).then(function (data) {
+                    return data;
+                }, function (data, status) {
+                    return data;
+                });
+            };
+
+            this.RecoverPassword = function (password, userID, recoveryToken) {
+                return $http.get("/api/recover/request", { params: { password: password, userID: userID, recoveryToken: recoveryToken } }).then(function (data) {
+                    return data;
+                }, function (data, status) {
+                    return data;
+                });
+            };
+
+
 
             //this.DeleteUser = function (LoginViewModel) {
             //    return $http.post("/api/delete", LoginViewModel).then(function (data) {
@@ -49,6 +67,8 @@
             this.Login = function (LoginViewModel) {
                 return $http.post("/api/login", LoginViewModel).then(function (data) {
                     location.reload();
+                }, function (data) {
+                    return data;
                 });
             }
 

@@ -17,6 +17,7 @@ namespace AngularandCSS.Data
 
         //DBSets
         public DbSet<EmailConfirmation> EmailConfirmations { get; set; }
+        public DbSet<PasswordRecover> PasswordRecovers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
