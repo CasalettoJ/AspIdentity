@@ -197,7 +197,6 @@ namespace AngularandCSS.Service
         {
             try
             {
-                User user = await _userManager.FindByEmailAsync("ossia.gaming@gmail.com");
                 return await _userManager.FindAsync(model.UserName, model.Password);
             }
             catch (Exception ex)
