@@ -4,6 +4,10 @@
 }
 
 <div ng-controller="HomeController" ng-cloak>
+    @if(ViewBag.Activation != null)
+    {
+        <div class="info">@ViewBag.Activation</div>
+    }
     @if (User.Identity.IsAuthenticated)
     {
         <h1>Logged in as @User.Identity.Name</h1>

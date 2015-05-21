@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataContext.cs" />
+    <Compile Include="EmailConfirmation.cs" />
     <Compile Include="Migrations\201502232031430_initial.cs" />
     <Compile Include="Migrations\201502232031430_initial.Designer.cs">
       <DependentUpon>201502232031430_initial.cs</DependentUpon>
@@ -71,6 +72,10 @@
     <Compile Include="Migrations\201505191751091_user_roles.cs" />
     <Compile Include="Migrations\201505191751091_user_roles.Designer.cs">
       <DependentUpon>201505191751091_user_roles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201505210225424_addition_of_email_confirmation.cs" />
+    <Compile Include="Migrations\201505210225424_addition_of_email_confirmation.Designer.cs">
+      <DependentUpon>201505210225424_addition_of_email_confirmation.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,6 +97,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201505191751091_user_roles.resx">
       <DependentUpon>201505191751091_user_roles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201505210225424_addition_of_email_confirmation.resx">
+      <DependentUpon>201505210225424_addition_of_email_confirmation.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

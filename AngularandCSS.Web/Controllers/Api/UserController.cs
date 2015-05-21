@@ -50,8 +50,11 @@ namespace AngularandCSS.Web.Controllers.Api
                 User user = await _userService.GetUserFromViewModel(model);
                 if (user != null)
                 {
-                    await _userService.SignIn(user, false, AuthenticationManager);
-                    return new HttpResponseMessage(HttpStatusCode.OK);
+                    if (await _userService.SignIn(user, false, AuthenticationManager))
+                    {
+                        return new HttpResponseMessage(HttpStatusCode.OK);
+                    }
+                    return new HttpResponseMessage(HttpStatusCode.Forbidden);
                 }
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
             }

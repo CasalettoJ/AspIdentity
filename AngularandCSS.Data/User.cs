@@ -10,5 +10,6 @@ namespace AngularandCSS.Data
     public class User : IdentityUser
     {
         public string Message { get; set; }
+        public bool CustomEmailConfirmation { get; set; }
     }
 }

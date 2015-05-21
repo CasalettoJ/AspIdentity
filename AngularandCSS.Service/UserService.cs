@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Owin.Security;
 using AngularandCSS.Service.ViewModels;
 using DevOne.Security.Cryptography.BCrypt;
+using System.Net.Mail;
 
 namespace AngularandCSS.Service
 {
@@ -24,7 +25,6 @@ namespace AngularandCSS.Service
                 RequireUniqueEmail = true,
                 AllowOnlyAlphanumericUserNames = true
             };
-            
             _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(dataContext));
         }
 
@@ -37,9 +37,11 @@ namespace AngularandCSS.Service
                 User newUser = new User()
                 {
                     Email = model.Email,
-                    UserName = model.UserName
+                    UserName = model.UserName,
+                    CustomEmailConfirmation = false
                 };
                 IdentityResult result = await _userManager.CreateAsync(newUser, model.Password);
+                await SendConfirmationEmail(newUser);
                 return new RegistrationResultViewModel()
                 {
                     Result = result,
@@ -59,29 +61,53 @@ namespace AngularandCSS.Service
 
         public async Task<bool> DeleteUser(User user)
         {
-            IdentityResult result = await _userManager.DeleteAsync(user);
-            if (result.Succeeded)
+            try
             {
-                return true;
+                IdentityResult result = await _userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                {
+                    EmailConfirmation confirmation = _dataContext.EmailConfirmations.Where(ec => ec.UserID == user.Id).FirstOrDefault();
+                    if (confirmation != null)
+                    {
+                        _dataContext.EmailConfirmations.Remove(confirmation);
+                        _dataContext.SaveChanges();
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
+            catch
             {
+                //log here.
                 return false;
             }
         }
 
 
-        public async Task SignIn(User user, bool isPersistant, IAuthenticationManager authenticationManager)
+        public async Task<bool> SignIn(User user, bool isPersistant, IAuthenticationManager authenticationManager)
         {
             try
             {
-                authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-                authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistant }, identity);
+                if (_userManager.FindByIdAsync(user.Id).Result.CustomEmailConfirmation)
+                {
+                    authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+                    var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+                    authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistant }, identity);
+                    return true;
+                }
+                else
+                {
+                    await SendConfirmationEmail(user);
+                    return false;
+                }
             }
             catch (Exception ex)
             {
                 //Log here.
+                return false;
             }
         }
 
@@ -104,12 +130,74 @@ namespace AngularandCSS.Service
 
         #endregion
 
-        #region user functions
+        #region user confirmation / user password actions
+
+        public async Task SendConfirmationEmail(User user)
+        {
+            try
+            {
+                string confirmationToken = BCryptHelper.GenerateSalt();
+                EmailConfirmation confirmation = _dataContext.EmailConfirmations.Where(ec => ec.UserID == user.Id).FirstOrDefault();
+                if (confirmation == null)
+                {
+                    EmailConfirmation newConfirmation = new EmailConfirmation()
+                    {
+                        ConfirmationToken = confirmationToken,
+                        UserID = user.Id
+                    };
+                    _dataContext.EmailConfirmations.Add(newConfirmation);
+                    _dataContext.SaveChanges();
+                }
+                else
+                {
+                    confirmationToken = confirmation.ConfirmationToken;
+                }
+                EmailFactory.SendConfirmationEmail(user.Email, user.Id, confirmationToken);
+            }
+            catch
+            {
+                //Log here.
+            }
+        }
+
+        public async Task<bool> ConfirmEmail(string userID, string confirmationToken)
+        {
+            try
+            {
+                EmailConfirmation confirmation = _dataContext.EmailConfirmations.Where(ec => ec.ConfirmationToken == confirmationToken && ec.UserID == userID).FirstOrDefault();
+                if(confirmation != null)
+                {
+                    _dataContext.EmailConfirmations.Remove(confirmation);
+                    User user = _dataContext.Users.Where(u => u.Id == userID).FirstOrDefault();
+                    if(user != null)
+                    {
+                        user.CustomEmailConfirmation = true;
+                        _dataContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                    }
+                    _dataContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                //Log here.
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region user database functions
 
         public async Task<User> GetUserFromViewModel(LoginViewModel model)
         {
             try
             {
+                User user = await _userManager.FindByEmailAsync("ossia.gaming@gmail.com");
                 return await _userManager.FindAsync(model.UserName, model.Password);
             }
             catch (Exception ex)

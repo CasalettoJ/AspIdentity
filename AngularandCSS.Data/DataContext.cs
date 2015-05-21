@@ -16,6 +16,7 @@ namespace AngularandCSS.Data
         }
 
         //DBSets
+        public DbSet<EmailConfirmation> EmailConfirmations { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
