@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin.Security;
-using System.Threading.Tasks;
 using AngularandCSS.Service.ViewModels;
 using DevOne.Security.Cryptography.BCrypt;
 
@@ -15,16 +14,21 @@ namespace AngularandCSS.Service
 {
     public class UserService : ServiceBase
     {
-        private UserManager<User> _userManager { get; set; }
-        private RoleManager<IdentityRole> _roleManager { get; set; }
+        private static UserManager<User> _userManager { get; set; }
+        private static RoleManager<IdentityRole> _roleManager { get; set; }
 
         public UserService( DataContext dataContext) : base(dataContext)
         {
             _userManager = new UserManager<User>(new UserStore<User>(dataContext));
+            _userManager.UserValidator = new UserValidator<User>(_userManager){
+                RequireUniqueEmail = true,
+                AllowOnlyAlphanumericUserNames = true
+            };
+            
             _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(dataContext));
         }
 
-        #region Signin / signout / register
+        #region Signin / signout / register / delete
 
         public async Task<RegistrationResultViewModel> Register(RegisterViewModel model)
         {
@@ -81,18 +85,6 @@ namespace AngularandCSS.Service
             }
         }
 
-        public async Task<User> GetUserFromViewModel(LoginViewModel model)
-        {
-            try
-            {
-                return await _userManager.FindAsync(model.UserName, model.Password);
-            }
-            catch(Exception ex)
-            {
-                //Log here.
-                return null;
-            }
-        }
 
         public async Task SignOut(IAuthenticationManager authenticationManager)
         {
@@ -106,6 +98,24 @@ namespace AngularandCSS.Service
             catch (Exception ex)
             {
                 //Log here.
+            }
+        }
+
+
+        #endregion
+
+        #region user functions
+
+        public async Task<User> GetUserFromViewModel(LoginViewModel model)
+        {
+            try
+            {
+                return await _userManager.FindAsync(model.UserName, model.Password);
+            }
+            catch (Exception ex)
+            {
+                //Log here.
+                return null;
             }
         }
 
