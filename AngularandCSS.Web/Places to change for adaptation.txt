@@ -1,0 +1,5 @@
+﻿EmailFactory requires new username, password, and BaseURL.
+
+_register partial needs new recaptcha div.  UserController (API) needs new recaptcha secret.
+
+EntityFramework needs new datacontext name/connectionstring

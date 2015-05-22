@@ -4,11 +4,13 @@ using AngularandCSS.Service.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -19,6 +21,7 @@ namespace AngularandCSS.Web.Controllers.Api
     public class UserController : ApiController
     {
         private DataContext db = new DataContext();
+        private static readonly string CaptchaSecret = "6Lf-PAcTAAAAAL-8t9iraYogL2rD1SmfuPHStAm4";
         private HttpResponseMessage _response { get; set; }
 
         private IAuthenticationManager AuthenticationManager { get { return Request.GetOwinContext().Authentication; } }
@@ -81,6 +84,22 @@ namespace AngularandCSS.Web.Controllers.Api
         {
             if (ModelState.IsValid)
             {
+                if (string.IsNullOrEmpty(model.CaptchaResponse))
+                {
+                    return _response = Request.CreateResponse(HttpStatusCode.BadRequest, "Please complete the captcha.");
+                }
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://www.google.com/recaptcha/api/siteverify");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = await client.PostAsync("?secret="+ CaptchaSecret + "&response=" + model.CaptchaResponse, null);
+                    JObject data = await response.Content.ReadAsAsync<JObject>();
+                    if (!(Boolean)data["success"])
+                    {
+                        return _response = Request.CreateResponse(HttpStatusCode.BadRequest, "Please complete the captcha successfully.");
+                    }
+                }
                 RegistrationResultViewModel result = await _userService.Register(model);
                 if (result.Result.Succeeded)
                 {

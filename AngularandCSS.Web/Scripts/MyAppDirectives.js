@@ -35,7 +35,7 @@
                 $scope.registerPassword = "";
                 $scope.registerEmail = "";
                 $scope.submitRegister = function () {
-                    var RegisterViewModel = { UserName: $scope.registerUsername, Email: $scope.registerEmail, Password: $scope.registerPassword };
+                    var RegisterViewModel = { UserName: $scope.registerUsername, Email: $scope.registerEmail, Password: $scope.registerPassword, CaptchaResponse: document.getElementById("g-recaptcha-response").value };
                     UserRepositoryService.RegisterUser(RegisterViewModel).then(function (data) {
                         $scope.registerError = data;
                     });

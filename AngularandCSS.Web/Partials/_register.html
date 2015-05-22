@@ -11,6 +11,9 @@
             <label for="email">Email:</label>
             <input ng-model="registerEmail" class="form-control" name="email" type="email" required /><span ng-if="RegisterForm.email.$error.required" class="pull-right error-icon" style="padding:3px;">Required</span><br /><br />
 
+            <div class="text-center">
+                <div class="g-recaptcha" data-sitekey="6Lf-PAcTAAAAAP0LZ-xZClGP5yUqml0cxDMCCMYI"></div>
+            </div>
             <button class="btn btn-lg btn-success pull-right" type="submit" ng-disabled="RegisterForm.$invalid" style="width:100%;">Register</button>
         </div>
     </div>

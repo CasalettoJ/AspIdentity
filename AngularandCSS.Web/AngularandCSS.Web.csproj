@@ -354,6 +354,7 @@
     <Content Include="Global.asax" />
     <Content Include="Partials\_recover.html" />
     <Content Include="Partials\_register.html" />
+    <Content Include="Places to change for adaptation.txt" />
     <Content Include="Scripts\MyApp.js" />
     <Content Include="Scripts\MyAppControllers.js" />
     <Content Include="Scripts\MyAppDirectives.js" />
