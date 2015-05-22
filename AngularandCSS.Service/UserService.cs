@@ -36,7 +36,7 @@ namespace AngularandCSS.Service
             _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(dataContext));
         }
 
-       #region Signin / signout / register / delete
+        #region Signin / signout / register / delete
 
         public async Task<RegistrationResultViewModel> Register(RegisterViewModel model)
         {
